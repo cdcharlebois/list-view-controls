@@ -47,7 +47,8 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 pageSizeOnChange: () => {
                     return;
                 },
-                pageSizeOptions: this.props.pageSizeOptions
+                pageSizeOptions: this.props.pageSizeOptions,
+                pushToClass: this.props.pushToClass
             })
         );
     }

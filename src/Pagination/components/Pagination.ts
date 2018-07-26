@@ -7,6 +7,7 @@ import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
 
 export interface PaginationProps {
+    pushToClass: string;
     hideUnusedPaging: boolean;
     items: ItemType[];
     listViewSize: number;

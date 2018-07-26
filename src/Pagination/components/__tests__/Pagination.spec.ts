@@ -390,7 +390,8 @@ describe("Pagination", () => {
         listViewSize: 32,
         pageSize: 2,
         onClickAction: jasmine.any(Function),
-        pagingStyle: "default"
+        pagingStyle: "default",
+        pushToClass: null
     };
 
     const itemProps = {

@@ -69,7 +69,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     }
 
     public static translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
-        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
+        return mxTranslation("mendix.lib.MxDataSource", "status", [`${fromValue}`, `${toValue}`, `${maxPageSize}`]);
     }
 
     render() {
@@ -110,7 +110,8 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 publishedPageNumber: this.state.publishedPageNumber,
                 updateSource: this.state.updateSource,
                 pageSizeOnChange: this.applyPageSize,
-                pageSizeOptions: this.props.pageSizeOptions
+                pageSizeOptions: this.props.pageSizeOptions,
+                pushToClass: this.props.pushToClass
             });
         }
 
@@ -167,7 +168,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 const dataSource = this.state.targetListView._datasource;
                 const listViewSize = dataSource._setSize;
                 const pageSize = dataSource._pageSize;
-                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
+                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView);
 
                 this.setState({
                     findingListViewWidget: false,
@@ -203,7 +204,17 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             }
 
             if (this.state.targetListView) {
-                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
+                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView);
+                // push to node on page.
+                if (this.state.targetNode && this.props.pushToClass) {
+                    try {
+                        this.pushPageSizeToNode(this.props.pushToClass);
+                    }
+                    catch (e) {
+                        console.log("Oops. Couldn't push the value to a tab")
+                    }
+
+                }
                 this.setState({ isLoadingItems: false, hideUnusedPaging });
             }
 
@@ -248,7 +259,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 });
 
                 targetListView._datasource.setOffset(offSet);
-                targetListView.sequence([ "_sourceReload", "_renderData" ]);
+                targetListView.sequence(["_sourceReload", "_renderData"]);
                 this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber });
             }
         }
@@ -271,15 +282,49 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         const { targetListView } = this.state;
 
         if (targetListView && targetListView._datasource
-                && targetListView._datasource._pageSize !== newPageSize) {
+            && targetListView._datasource._pageSize !== newPageSize) {
             this.setState({
                 pageSize: newPageSize,
                 publishedOffset: newOffSet
             });
             targetListView._datasource._pageSize = newPageSize;
             targetListView._datasource.setOffset(newOffSet);
-            targetListView.sequence([ "_sourceReload", "_renderData" ]);
+            targetListView.sequence(["_sourceReload", "_renderData"]);
             this.publishListViewUpdate({ ...onChangeProps });
+        }
+    }
+
+    // private pushPageSizeToTab = () => {
+    //     // find the closest tab-pane
+    //     const tabPane = this.state.targetNode.parentElement;
+    //     // get the index of that tab pane
+    //     const tabPaneParent = tabPane.parentElement;
+    //     const tabPanes = Array.prototype.slice.call(tabPaneParent.children);
+    //     const index = tabPanes.indexOf(tabPane);
+    //     // push to the tab-page of the pane
+    //     const navTabs = tabPane.parentElement.parentElement.querySelector(".nav-tabs");
+    //     const pushToNode = navTabs.children[index].children[0]; // the 'a'
+    //     if (pushToNode.children.length !== 0) {
+    //         pushToNode.children[0].innerHTML = ` (${this.state.targetListView._datasource._setSize})`
+    //     }
+    //     else {
+    //         const span = document.createElement("span");
+    //         span.className = "lv-count";
+    //         span.innerHTML = ` (${this.state.targetListView._datasource._setSize})`;
+    //         pushToNode.appendChild(span);
+    //     }
+    // }
+
+    private pushPageSizeToNode = (targetNodeClass: string) => {
+        const targetNode = document.querySelector(targetNodeClass);
+        const countNode = targetNode.querySelector(".lv-count")
+        if (countNode) {
+            countNode.innerHTML = ` (${this.state.targetListView._datasource._setSize})`
+        } else {
+            const span = document.createElement("span");
+            span.className = "lv-count";
+            span.innerHTML = ` (${this.state.targetListView._datasource._setSize})`;
+            targetNode.appendChild(span);
         }
     }
 }

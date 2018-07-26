@@ -9,6 +9,11 @@
             <category>Appearance</category>
             <description>Hide paging buttons when there is only one page</description>
         </property>
+        <property key="pushToClass" type="string" required="false">
+          <caption>Show count class</caption>
+          <category>Appearance</category>
+          <description>When set, the widget will look for an element with this classname, and append a `span` element with the total count of items in the listview. This is an HTML selector, so include the `.`</description>
+        </property>
         <property key="pagingStyle" type="enumeration" defaultValue="default">
             <caption>Paging style</caption>
             <category>Appearance</category>

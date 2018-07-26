@@ -32,6 +32,7 @@ export interface ModelerProps extends WrapperProps {
     enablePageSize: boolean;
     pageSizeLabel: string;
     pageSizeOptions: PageSizeOption[];
+    pushToClass: string;
 }
 
 export interface TopicMessage {
